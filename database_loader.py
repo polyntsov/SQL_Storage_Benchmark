@@ -14,15 +14,17 @@ database_name = sys.argv[5]
 host = sys.argv[6]
 username = sys.argv[7]
 password = sys.argv[8]
+keep_temp = True if sys.argv[9] == 'True' else False
+
 if sql_version == "mssql":
-	sql_version_number = sys.argv[9]
+	sql_version_number = sys.argv[10]
 	sql_driver = "ODBC Driver {} for SQL Server".format(sql_version_number)
 if sql_version == "mysql":
-	temp_path=sys.argv[9]
+	temp_path=sys.argv[10]
 	if temp_path is None:
 		temp_path = ""
 if sql_version == "mssql":
-	sql_port = sys.argv[10]
+	sql_port = sys.argv[11]
 
 
 if sql_version == "mssql":
@@ -165,8 +167,9 @@ def mysql_load_database_tables():
 			error=str(e)
 			print(error)
 		load_connect.close()
-		print("Deleteing {}".format(filename))
-		os.remove(filename)
+		if not keep_temp:
+			print("Deleting {}".format(filename))
+			os.remove(filename)
 	elif counter > 0:
 		rows_left = (rows_per_user - (max_rows * counter))
 		y = 1
@@ -185,10 +188,11 @@ def mysql_load_database_tables():
 			except mysql.connector.Error as e:
 				error = str(e)
 				print(error)
-			load_connect.close()
-			print("Deleteing {}".format(filename))
-			os.remove(filename)
-			y+=1
+				load_connect.close()
+				if not keep_temp:
+					print("Deleting {}".format(filename))
+					os.remove(filename)
+				y+=1
 	if rows_left != 0:
 		filename = temp_path + "bulk_data_user_{}_{}_{}_mysql.csv".format(user_number, y, rows_left)
 		print("Writing out data file {}".format(filename))

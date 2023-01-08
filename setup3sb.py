@@ -24,6 +24,7 @@ parser.add_argument('-p', '--password', type=str, required=True, help='Server Pa
 parser.add_argument('-o', '--sql-driver-number', type=int, help='MSSQL ODBC Driver verions number: ex: ODBC Driver 17 for SQL Server')
 parser.add_argument('-t', '--temp-path', type=str, help='Mysql temp path for raw data. If no path is given, path will be the 3SB working directory')
 parser.add_argument('-P', '--sql-port', type=int, help='Microsoft Sql Server Dynamic Port Number')
+parser.add_argument('-k', '--keep-temp', action='store_true', help='Don\'t delete temp data')
 args = parser.parse_args()
 
 sql_version = args.sql_version
@@ -33,6 +34,7 @@ database_name = args.database_name
 host = args.host
 username = args.username
 password = args.password
+keep_temp = args.keep_temp
 
 operating_system = platform.system()
 abs_path = args.temp_path
@@ -331,9 +333,9 @@ def main():
 			print("Creating Data and loading tables for user {} out of {} users.                                *".format(user_number, users))
 			print("**********************************************************************************************")
 			if sql_version == "mssql":
-				args = "python database_loader.py {} {} {} {} {} {} {} {} {} {}".format(users,user_number,rows_per_user,sql_version,database_name,host,username,password,sql_version_number, sql_port)
+				args = "python database_loader.py {} {} {} {} {} {} {} {} {} {} {}".format(users,user_number,rows_per_user,sql_version,database_name,host,username,password,keep_temp,sql_version_number, sql_port)
 			else:
-				args = "python database_loader.py {} {} {} {} {} {} {} {} {}".format(users,user_number,rows_per_user,sql_version,database_name,host,username,password,temp_path)
+				args = "python database_loader.py {} {} {} {} {} {} {} {} {} {}".format(users,user_number,rows_per_user,sql_version,database_name,host,username,password,keep_temp,temp_path)
 			threads = subprocess.Popen(args,shell=True)
 			processes.append(threads)
 			time.sleep(.05)
