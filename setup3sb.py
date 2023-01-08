@@ -230,11 +230,18 @@ def mysql_create_database():
 	}
 	mysql_connection = mysql.connector.connect(**connect_string)
 	mysql_cursor = mysql_connection.cursor()
-	query = "create database if not exists {}".format(database_name)
+	query = "drop database if exists {}".format(database_name)
 	try:
 		mysql_cursor.execute(query)
+		query = "create database {}".format(database_name)
+		try:
+			mysql_cursor.execute(query)
+		except mysql.connector.Error as e:
+			error = e.args[1]
+			print(error)
 	except mysql.connector.Error as e:
 		error = e.args[1]
+		print(error)
 
 
 def mysql_create_user_tables():
