@@ -36,6 +36,7 @@ password = args.password
 
 operating_system = platform.system()
 abs_path = args.temp_path
+temp_path = args.temp_path
 
 if sql_version == "mssql":
 	sql_version_number = args.sql_driver_number
